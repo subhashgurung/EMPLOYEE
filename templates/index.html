@@ -1,0 +1,1186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JavaGoat HR</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root{
+      --primary:#7C3AED;
+      --primary2:#4F46E5;
+      --bg:#F6F7FB;
+      --panel:#FFFFFF;
+      --text:#111827;
+      --muted:#6B7280;
+      --border:#E5E7EB;
+      --danger:#EF4444;
+      --ok:#10B981;
+      --warn:#F59E0B;
+      --shadow:0 18px 50px rgba(17,24,39,.10);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
+    }
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .hidden{display:none!important}
+
+    .login{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      background:#fff;
+    }
+    .login-art{
+      position:relative;
+      overflow:hidden;
+      padding:60px;
+      color:white;
+      background:
+        radial-gradient(circle at 20% 20%,rgba(255,255,255,.32),transparent 28%),
+        radial-gradient(circle at 80% 55%,rgba(236,72,153,.32),transparent 24%),
+        linear-gradient(135deg,var(--primary),var(--primary2));
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .login-art:before,.login-art:after{
+      content:"";
+      position:absolute;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      filter:blur(1px);
+    }
+    .login-art:before{width:420px;height:420px;right:-120px;top:-100px}
+    .login-art:after{width:280px;height:280px;left:90px;bottom:70px}
+    .brand-lockup{position:relative;z-index:1;display:flex;align-items:center;gap:14px}
+    .brand-mark{
+      width:54px;height:54px;border-radius:18px;
+      display:grid;place-items:center;
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.28);
+      box-shadow:0 20px 60px rgba(0,0,0,.2);
+    }
+    .brand-title{font-family:Sora,sans-serif;font-size:28px;font-weight:800;letter-spacing:-.04em}
+    .brand-sub{opacity:.8;font-size:13px;font-weight:600}
+    .hero-copy{position:relative;z-index:1;max-width:660px}
+    .hero-copy h1{
+      font-family:Sora,sans-serif;
+      font-size:64px;
+      line-height:1;
+      letter-spacing:-.06em;
+      margin:0 0 24px;
+    }
+    .hero-copy p{font-size:18px;line-height:1.7;opacity:.86;max-width:560px}
+    .login-card-wrap{display:grid;place-items:center;padding:48px}
+    .login-card{width:min(440px,100%)}
+    .login-card h2{
+      font-family:Sora,sans-serif;
+      font-size:36px;
+      letter-spacing:-.04em;
+      margin:0 0 10px;
+    }
+    .login-card p{color:var(--muted);margin:0 0 32px}
+    .field{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+    .field label{font-weight:700;font-size:13px;color:#374151}
+    .input,.select,.textarea{
+      width:100%;
+      border:1px solid var(--border);
+      background:white;
+      border-radius:14px;
+      padding:13px 14px;
+      outline:none;
+      transition:.2s;
+    }
+    .textarea{min-height:94px;resize:vertical}
+    .input:focus,.select:focus,.textarea:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 4px rgba(124,58,237,.12);
+    }
+    .btn{
+      border:0;
+      border-radius:14px;
+      padding:12px 16px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:9px;
+      font-weight:800;
+      color:white;
+      background:linear-gradient(135deg,var(--primary),var(--primary2));
+      box-shadow:0 14px 30px rgba(79,70,229,.25);
+    }
+    .btn.secondary{
+      color:#374151;
+      background:#fff;
+      border:1px solid var(--border);
+      box-shadow:none;
+    }
+    .btn.danger{
+      background:linear-gradient(135deg,#EF4444,#DC2626);
+      box-shadow:none;
+    }
+    .btn.ghost{
+      background:transparent;
+      color:#4B5563;
+      box-shadow:none;
+      border:1px solid var(--border);
+    }
+    .hint{
+      margin-top:16px;
+      padding:13px;
+      border-radius:14px;
+      color:#4B5563;
+      background:#F3F4F6;
+      font-family:"JetBrains Mono",monospace;
+      font-size:12px;
+    }
+
+    .app{min-height:100vh;display:grid;grid-template-columns:286px 1fr}
+    .sidebar{
+      position:sticky;top:0;height:100vh;
+      padding:22px;
+      color:white;
+      background:
+        radial-gradient(circle at 25% 10%,rgba(255,255,255,.2),transparent 28%),
+        linear-gradient(180deg,var(--primary),var(--primary2));
+    }
+    .side-card{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:28px;
+      padding:18px;
+      background:rgba(255,255,255,.08);
+      backdrop-filter:blur(16px);
+    }
+    .side-brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+    .side-brand .brand-mark{width:46px;height:46px;border-radius:16px}
+    .nav{display:flex;flex-direction:column;gap:8px}
+    .nav a{
+      color:rgba(255,255,255,.82);
+      text-decoration:none;
+      border-radius:16px;
+      padding:13px 14px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:800;
+      transition:.18s;
+    }
+    .nav a:hover,.nav a.active{
+      color:white;
+      background:rgba(255,255,255,.16);
+    }
+    .side-footer{margin-top:auto}
+    .logout{
+      width:100%;
+      border:1px solid rgba(255,255,255,.25);
+      color:white;
+      background:rgba(255,255,255,.1);
+      box-shadow:none;
+    }
+
+    .main{padding:28px 32px 44px;overflow:hidden}
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:24px;
+    }
+    .page-title h1{
+      font-family:Sora,sans-serif;
+      margin:0;
+      font-size:34px;
+      letter-spacing:-.05em;
+    }
+    .page-title p{margin:6px 0 0;color:var(--muted)}
+    .user-chip{
+      display:flex;align-items:center;gap:10px;
+      background:white;border:1px solid var(--border);
+      padding:9px 12px;border-radius:999px;
+      box-shadow:0 8px 24px rgba(17,24,39,.06);
+      font-weight:800;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:16px;
+      margin-bottom:16px;
+    }
+    .stat{
+      color:white;
+      border-radius:22px;
+      padding:18px;
+      min-height:126px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .stat:after{
+      content:"";
+      position:absolute;
+      right:-35px;top:-35px;
+      width:120px;height:120px;border-radius:999px;
+      background:rgba(255,255,255,.18);
+    }
+    .stat .label{opacity:.86;font-weight:800;font-size:13px}
+    .stat .value{font-family:Sora,sans-serif;font-size:34px;font-weight:800;margin-top:16px}
+    .grid-3{display:grid;grid-template-columns:1.1fr .85fr 1.05fr;gap:16px;margin-bottom:16px}
+    .grid-2{display:grid;grid-template-columns:1.45fr .85fr;gap:16px}
+    .panel{
+      background:white;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:0 12px 38px rgba(17,24,39,.06);
+      padding:18px;
+      min-width:0;
+    }
+    .panel h3{
+      margin:0 0 14px;
+      font-family:Sora,sans-serif;
+      letter-spacing:-.03em;
+    }
+    .chart-box{height:280px}
+    .position-list{max-height:280px;overflow:auto;display:flex;flex-direction:column;gap:10px;padding-right:4px}
+    .person-row{
+      display:flex;align-items:center;gap:12px;
+      padding:11px;border:1px solid #EEF2F7;border-radius:16px;
+    }
+    .avatar{width:38px;height:38px;border-radius:14px;object-fit:cover;background:#EEE}
+    .avatar.sm{width:32px;height:32px;border-radius:12px}
+    .person-name{font-weight:800}
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 10px;border-radius:999px;
+      font-size:12px;font-weight:900;color:white;
+      background:linear-gradient(135deg,#7C3AED,#4F46E5);
+      white-space:nowrap;
+    }
+
+    .section-card{
+      background:white;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:0 12px 38px rgba(17,24,39,.06);
+      overflow:hidden;
+    }
+    .toolbar{
+      padding:16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom:1px solid var(--border);
+      flex-wrap:wrap;
+    }
+    .tools-left{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .search-wrap{position:relative;min-width:270px}
+    .search-wrap i{position:absolute;left:12px;top:12px;color:#9CA3AF}
+    .search-wrap .input{padding-left:40px}
+    .table-wrap{overflow:auto}
+    table{width:100%;border-collapse:collapse;min-width:920px}
+    th,td{padding:14px 16px;border-bottom:1px solid #EEF2F7;text-align:left;vertical-align:middle}
+    th{
+      color:#6B7280;
+      font-size:12px;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      background:#FBFCFF;
+    }
+    td{font-size:14px}
+    tr:hover td{background:#FCFCFF}
+    .row-actions{display:flex;gap:8px}
+    .icon-btn{
+      width:36px;height:36px;border-radius:12px;
+      border:1px solid var(--border);
+      background:white;
+      display:grid;place-items:center;
+      color:#4B5563;
+    }
+    .icon-btn:hover{border-color:#C4B5FD;color:var(--primary)}
+    .icon-btn.danger:hover{border-color:#FCA5A5;color:var(--danger)}
+    .empty{padding:44px;text-align:center;color:var(--muted)}
+
+    .modal-backdrop{
+      position:fixed;inset:0;z-index:50;
+      background:rgba(17,24,39,.52);
+      display:grid;place-items:center;
+      padding:18px;
+    }
+    .modal{
+      width:min(760px,100%);
+      max-height:90vh;
+      overflow:auto;
+      background:white;
+      border-radius:26px;
+      box-shadow:0 30px 90px rgba(0,0,0,.26);
+    }
+    .modal-head{
+      position:sticky;top:0;background:white;z-index:1;
+      padding:18px 20px;
+      display:flex;align-items:center;justify-content:space-between;
+      border-bottom:1px solid var(--border);
+      border-radius:26px 26px 0 0;
+    }
+    .modal-head h3{margin:0;font-family:Sora,sans-serif;letter-spacing:-.03em}
+    .modal-body{padding:20px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .form-grid .wide{grid-column:1/-1}
+    .preview{
+      width:72px;height:72px;border-radius:22px;object-fit:cover;
+      border:1px solid var(--border);background:#F3F4F6;
+    }
+    .modal-actions{
+      padding:18px 20px;border-top:1px solid var(--border);
+      display:flex;justify-content:flex-end;gap:10px;
+      background:#FBFCFF;border-radius:0 0 26px 26px;
+    }
+    .toast{
+      position:fixed;
+      right:22px;
+      bottom:22px;
+      background:#111827;
+      color:white;
+      padding:13px 16px;
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      z-index:80;
+      font-weight:800;
+    }
+
+    @media(max-width:1180px){
+      .stats{grid-template-columns:repeat(2,1fr)}
+      .grid-3,.grid-2{grid-template-columns:1fr}
+      .app{grid-template-columns:1fr}
+      .sidebar{position:relative;height:auto}
+      .side-card{height:auto}
+      .nav{display:grid;grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:800px){
+      .login{grid-template-columns:1fr}
+      .login-art{display:none}
+      .main{padding:20px}
+      .stats{grid-template-columns:1fr}
+      .form-grid{grid-template-columns:1fr}
+      .nav{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loginView" class="login hidden">
+    <section class="login-art">
+      <div class="brand-lockup">
+        <div class="brand-mark"><i data-lucide="flame"></i></div>
+        <div>
+          <div class="brand-title">JavaGoat HR</div>
+          <div class="brand-sub">People operations, simplified</div>
+        </div>
+      </div>
+      <div class="hero-copy">
+        <h1>Modern HRMS for growing teams.</h1>
+        <p>Track people, positions, attendance, leave requests and payroll with a vibrant dashboard built for speed.</p>
+      </div>
+      <div class="brand-sub">Secure mock access for demo environments</div>
+    </section>
+
+    <section class="login-card-wrap">
+      <form id="loginForm" class="login-card">
+        <h2>Welcome back</h2>
+        <p>Sign in to continue to your JavaGoat HR workspace.</p>
+
+        <div class="field">
+          <label>Email</label>
+          <input class="input" name="email" type="email" value="admin@javagoat.hr" required>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input class="input" name="password" type="password" value="password123" required>
+        </div>
+
+        <button class="btn" type="submit" style="width:100%;margin-top:8px">
+          <i data-lucide="log-in"></i> Sign in
+        </button>
+
+        <div class="hint">Demo login: admin@javagoat.hr / password123</div>
+      </form>
+    </section>
+  </div>
+
+  <div id="appView" class="app hidden">
+    <aside class="sidebar">
+      <div class="side-card">
+        <div class="side-brand">
+          <div class="brand-mark"><i data-lucide="flame"></i></div>
+          <div>
+            <div class="brand-title" style="font-size:22px">JavaGoat HR</div>
+            <div class="brand-sub">Admin Console</div>
+          </div>
+        </div>
+
+        <nav class="nav" id="nav">
+          <a href="#dashboard" data-route="dashboard"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+          <a href="#employees" data-route="employees"><i data-lucide="users"></i>Employees</a>
+          <a href="#departments" data-route="departments"><i data-lucide="building-2"></i>Departments</a>
+          <a href="#positions" data-route="positions"><i data-lucide="briefcase-business"></i>Positions</a>
+          <a href="#attendance" data-route="attendance"><i data-lucide="calendar-check"></i>Attendance</a>
+          <a href="#leaves" data-route="leaves"><i data-lucide="plane-takeoff"></i>Leaves</a>
+          <a href="#payroll" data-route="payroll"><i data-lucide="wallet-cards"></i>Payroll</a>
+        </nav>
+
+        <div class="side-footer">
+          <button id="logoutBtn" class="btn logout"><i data-lucide="log-out"></i> Logout</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="page-title">
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle">Real-time people operations overview.</p>
+        </div>
+        <div class="user-chip">
+          <img class="avatar sm" src="https://api.dicebear.com/7.x/initials/svg?seed=Admin&backgroundColor=6D28D9&textColor=ffffff" alt="Admin">
+          HR Admin
+        </div>
+      </div>
+
+      <div id="content"></div>
+    </main>
+  </div>
+
+  <div id="modalRoot"></div>
+  <div id="toast" class="toast hidden"></div>
+
+  <script>
+    const DEFAULT_AVATAR = "https://api.dicebear.com/7.x/initials/svg?backgroundColor=6D28D9&textColor=ffffff";
+    const API_TOKEN_KEY = "javagoat_hr_token";
+
+    const state = {
+      employees: [],
+      departments: [],
+      positions: [],
+      attendance: [],
+      leaves: [],
+      payroll: [],
+      stats: null,
+      filters: {}
+    };
+
+    const charts = {};
+
+    const routeMeta = {
+      dashboard: ["Dashboard", "Real-time people operations overview."],
+      employees: ["Employees", "Manage employee profiles, status, department and role assignments."],
+      departments: ["Departments", "Organize your company structure."],
+      positions: ["Positions", "Create roles and assign employees to open positions."],
+      attendance: ["Attendance", "Track daily attendance and work status."],
+      leaves: ["Leaves", "Review and manage leave requests."],
+      payroll: ["Payroll", "Generate and track payroll records."]
+    };
+
+    const colors = ["#7C3AED","#2563EB","#10B981","#F97316","#EC4899","#06B6D4","#F59E0B","#EF4444","#14B8A6","#8B5CF6"];
+
+    function esc(value){
+      return String(value ?? "").replace(/[&<>"']/g, m => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[m]));
+    }
+
+    function money(v){
+      return "$" + Number(v || 0).toLocaleString(undefined,{maximumFractionDigits:2});
+    }
+
+    function toast(msg){
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.remove("hidden");
+      setTimeout(()=>t.classList.add("hidden"),2600);
+    }
+
+    function employeeName(e){
+      return `${e.first_name || ""} ${e.last_name || ""}`.trim() || e.full_name || "Unnamed";
+    }
+
+    function avatarFor(e){
+      const name = typeof e === "string" ? e : employeeName(e);
+      return (typeof e === "object" && e.profile_pic) ? e.profile_pic : `${DEFAULT_AVATAR}&seed=${encodeURIComponent(name || "JG")}`;
+    }
+
+    async function api(path, options = {}){
+      const res = await fetch(path, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem(API_TOKEN_KEY) || ""}`,
+          ...(options.headers || {})
+        }
+      });
+      const data = await res.json().catch(()=>({}));
+      if(!res.ok) throw new Error(data.error || "Request failed");
+      return data;
+    }
+
+    async function login(email,password){
+      const data = await api("/api/login", {
+        method:"POST",
+        body:JSON.stringify({email,password})
+      });
+      localStorage.setItem(API_TOKEN_KEY,data.token);
+    }
+
+    async function loadAll(){
+      const [employees, departments, positions, attendance, leaves, payroll, stats] = await Promise.all([
+        api("/api/employees"),
+        api("/api/departments"),
+        api("/api/positions"),
+        api("/api/attendance"),
+        api("/api/leaves"),
+        api("/api/payroll"),
+        api("/api/dashboard/stats")
+      ]);
+      Object.assign(state,{employees,departments,positions,attendance,leaves,payroll,stats});
+    }
+
+    const selectOptions = {
+      departments: () => state.departments.map(d => [d.id, d.name]),
+      positions: () => state.positions.map(p => [p.id, p.title]),
+      employees: () => state.employees.map(e => [e.id, employeeName(e)])
+    };
+
+    const configs = {
+      employees: {
+        title:"Employee",
+        addText:"Add Employee",
+        filters:[
+          {key:"status",label:"Status",options:[["","All Statuses"],["Active","Active"],["Inactive","Inactive"],["On Leave","On Leave"]]},
+          {key:"department_id",label:"Department",options:()=>[["","All Departments"],...selectOptions.departments()]}
+        ],
+        fields:[
+          {key:"profile_pic",label:"Profile Picture",type:"file",wide:true},
+          {key:"first_name",label:"First Name",type:"text",required:true},
+          {key:"last_name",label:"Last Name",type:"text",required:true},
+          {key:"email",label:"Email",type:"email",required:true},
+          {key:"phone",label:"Phone",type:"text"},
+          {key:"department_id",label:"Department",type:"select",options:()=>[["","Unassigned"],...selectOptions.departments()],valueType:"number"},
+          {key:"position_id",label:"Position",type:"select",options:()=>[["","Unassigned"],...selectOptions.positions()],valueType:"number"},
+          {key:"salary",label:"Salary",type:"number"},
+          {key:"hire_date",label:"Hire Date",type:"date"},
+          {key:"status",label:"Status",type:"select",options:[["Active","Active"],["Inactive","Inactive"],["On Leave","On Leave"]]}
+        ],
+        columns:[
+          {label:"Employee",render:e=>`<div style="display:flex;align-items:center;gap:11px"><img class="avatar" src="${esc(avatarFor(e))}"><div><b>${esc(employeeName(e))}</b><div style="color:#6B7280">${esc(e.email)}</div></div></div>`},
+          {label:"Department",render:e=>esc(e.department_name || "Unassigned")},
+          {label:"Position",render:e=>`<span class="pill">${esc(e.position_title || "Unassigned")}</span>`},
+          {label:"Phone",render:e=>esc(e.phone || "-")},
+          {label:"Salary",render:e=>money(e.salary)},
+          {label:"Status",render:e=>statusPill(e.status)}
+        ]
+      },
+
+      departments: {
+        title:"Department",
+        addText:"Add Department",
+        filters:[
+          {key:"has_positions",label:"Position Coverage",options:[["","All Departments"],["with","With Positions"],["without","Without Positions"]]}
+        ],
+        fields:[
+          {key:"name",label:"Department Name",type:"text",required:true},
+          {key:"description",label:"Description",type:"textarea",wide:true}
+        ],
+        columns:[
+          {label:"Department",render:d=>`<b>${esc(d.name)}</b>`},
+          {label:"Description",render:d=>esc(d.description || "-")},
+          {label:"Positions",render:d=>state.positions.filter(p=>Number(p.department_id)===Number(d.id)).length},
+          {label:"Employees",render:d=>state.employees.filter(e=>Number(e.department_id)===Number(d.id)).length}
+        ]
+      },
+
+      positions: {
+        title:"Position",
+        addText:"Add Position",
+        filters:[
+          {key:"department_id",label:"Department",options:()=>[["","All Departments"],...selectOptions.departments()]}
+        ],
+        fields:[
+          {key:"title",label:"Position Title",type:"text",required:true},
+          {key:"department_id",label:"Department",type:"select",options:()=>[["","Unassigned"],...selectOptions.departments()],valueType:"number"},
+          {key:"description",label:"Description",type:"textarea",wide:true}
+        ],
+        columns:[
+          {label:"Position",render:p=>`<b>${esc(p.title)}</b>`},
+          {label:"Department",render:p=>esc(p.department_name || "Unassigned")},
+          {label:"Assigned Employees",render:p=>{
+            const assigned = p.assigned_employees || state.employees.filter(e=>Number(e.position_id)===Number(p.id));
+            return assigned.length
+              ? assigned.map(e=>`<span class="pill" style="margin:2px;background:${colors[e.id % colors.length]}">${esc(employeeName(e))}</span>`).join(" ")
+              : `<span style="color:#6B7280">No employees assigned</span>`;
+          }},
+          {label:"Assign",render:p=>`<button class="btn secondary" onclick="openAssignModal(${p.id})"><i data-lucide="user-plus"></i> Assign Employee</button>`}
+        ]
+      },
+
+      attendance: {
+        title:"Attendance",
+        addText:"Add Attendance",
+        filters:[
+          {key:"status",label:"Status",options:[["","All Statuses"],["Present","Present"],["Absent","Absent"],["Late","Late"],["Remote","Remote"]]}
+        ],
+        fields:[
+          {key:"employee_id",label:"Employee",type:"select",options:()=>selectOptions.employees(),valueType:"number",required:true},
+          {key:"date",label:"Date",type:"date",required:true},
+          {key:"check_in",label:"Check In",type:"time"},
+          {key:"check_out",label:"Check Out",type:"time"},
+          {key:"status",label:"Status",type:"select",options:[["Present","Present"],["Absent","Absent"],["Late","Late"],["Remote","Remote"]]}
+        ],
+        columns:[
+          {label:"Employee",render:a=>esc(a.employee_name || employeeName(state.employees.find(e=>e.id===a.employee_id) || {}))},
+          {label:"Date",render:a=>esc(a.date)},
+          {label:"Check In",render:a=>esc(a.check_in || "-")},
+          {label:"Check Out",render:a=>esc(a.check_out || "-")},
+          {label:"Status",render:a=>statusPill(a.status)}
+        ]
+      },
+
+      leaves: {
+        title:"Leave",
+        addText:"Add Leave",
+        filters:[
+          {key:"status",label:"Status",options:[["","All Statuses"],["Pending","Pending"],["Approved","Approved"],["Rejected","Rejected"]]}
+        ],
+        fields:[
+          {key:"employee_id",label:"Employee",type:"select",options:()=>selectOptions.employees(),valueType:"number",required:true},
+          {key:"type",label:"Leave Type",type:"select",options:[["Annual","Annual"],["Sick","Sick"],["Maternity","Maternity"],["Unpaid","Unpaid"]]},
+          {key:"start_date",label:"Start Date",type:"date",required:true},
+          {key:"end_date",label:"End Date",type:"date",required:true},
+          {key:"status",label:"Status",type:"select",options:[["Pending","Pending"],["Approved","Approved"],["Rejected","Rejected"]]},
+          {key:"reason",label:"Reason",type:"textarea",wide:true}
+        ],
+        columns:[
+          {label:"Employee",render:l=>esc(l.employee_name || "-")},
+          {label:"Type",render:l=>`<span class="pill">${esc(l.type)}</span>`},
+          {label:"Dates",render:l=>`${esc(l.start_date)} → ${esc(l.end_date)}`},
+          {label:"Reason",render:l=>esc(l.reason || "-")},
+          {label:"Status",render:l=>statusPill(l.status)}
+        ]
+      },
+
+      payroll: {
+        title:"Payroll",
+        addText:"Generate Payroll",
+        filters:[
+          {key:"status",label:"Status",options:[["","All Statuses"],["Draft","Draft"],["Paid","Paid"]]}
+        ],
+        fields:[
+          {key:"employee_id",label:"Employee",type:"select",options:()=>selectOptions.employees(),valueType:"number",required:true},
+          {key:"period",label:"Payroll Period",type:"month",required:true},
+          {key:"basic_salary",label:"Basic Salary",type:"number",readonly:true},
+          {key:"allowances",label:"Allowances",type:"number"},
+          {key:"deductions",label:"Deductions",type:"number"},
+          {key:"net_pay",label:"Net Pay",type:"number"},
+          {key:"status",label:"Status",type:"select",options:[["Draft","Draft"],["Paid","Paid"]]}
+        ],
+        columns:[
+          {label:"Employee",render:p=>esc(p.employee_name || "-")},
+          {label:"Period",render:p=>esc(p.period)},
+          {label:"Basic Salary",render:p=>money(p.basic_salary)},
+          {label:"Allowances",render:p=>money(p.allowances)},
+          {label:"Deductions",render:p=>money(p.deductions)},
+          {label:"Net Pay",render:p=>`<b>${money(p.net_pay)}</b>`},
+          {label:"Status",render:p=>statusPill(p.status)}
+        ]
+      }
+    };
+
+    function statusPill(status){
+      const map = {
+        Active:"#10B981",
+        Present:"#10B981",
+        Approved:"#10B981",
+        Paid:"#10B981",
+        Inactive:"#6B7280",
+        Absent:"#EF4444",
+        Rejected:"#EF4444",
+        Late:"#F59E0B",
+        Pending:"#F59E0B",
+        Draft:"#6366F1",
+        Remote:"#06B6D4",
+        "On Leave":"#EC4899"
+      };
+      return `<span class="pill" style="background:${map[status] || "#7C3AED"}">${esc(status || "-")}</span>`;
+    }
+
+    function setRoute(route){
+      const meta = routeMeta[route] || routeMeta.dashboard;
+      document.getElementById("pageTitle").textContent = meta[0];
+      document.getElementById("pageSubtitle").textContent = meta[1];
+      document.querySelectorAll("#nav a").forEach(a=>a.classList.toggle("active",a.dataset.route===route));
+    }
+
+    async function render(){
+      const route = (location.hash || "#dashboard").replace("#","");
+      setRoute(route);
+      if(route === "dashboard") renderDashboard();
+      else if(configs[route]) renderSection(route);
+      else location.hash = "#dashboard";
+      lucide.createIcons();
+    }
+
+    function renderDashboard(){
+      const s = state.stats || {};
+      const cards = [
+        ["Employees",s.cards?.employees || 0,"users","linear-gradient(135deg,#2563EB,#60A5FA)"],
+        ["Active Staff",s.cards?.active || 0,"badge-check","linear-gradient(135deg,#059669,#34D399)"],
+        ["Departments",s.cards?.departments || 0,"building-2","linear-gradient(135deg,#F97316,#FDBA74)"],
+        ["Pending Leaves",s.cards?.pending_leaves || 0,"plane-takeoff","linear-gradient(135deg,#DB2777,#F9A8D4)"],
+        ["Monthly Payroll",money(s.cards?.monthly_payroll || 0),"wallet-cards","linear-gradient(135deg,#0891B2,#67E8F9)"]
+      ];
+
+      document.getElementById("content").innerHTML = `
+        <div class="stats">
+          ${cards.map(c=>`
+            <div class="stat" style="background:${c[3]}">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="label">${c[0]}</div>
+                <i data-lucide="${c[2]}"></i>
+              </div>
+              <div class="value">${c[1]}</div>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="grid-3">
+          <div class="panel"><h3>Hiring Trend</h3><div class="chart-box"><canvas id="hiringChart"></canvas></div></div>
+          <div class="panel"><h3>Department Mix</h3><div class="chart-box"><canvas id="deptChart"></canvas></div></div>
+          <div class="panel">
+            <h3>Employees by Position</h3>
+            <div class="position-list">
+              ${(s.employees_by_position || []).map((e,i)=>`
+                <div class="person-row">
+                  <img class="avatar" src="${esc(e.profile_pic || `${DEFAULT_AVATAR}&seed=${encodeURIComponent(e.name)}`)}">
+                  <div style="flex:1;min-width:0">
+                    <div class="person-name">${esc(e.name)}</div>
+                    <div style="font-size:12px;color:#6B7280">${esc(e.department || "Unassigned department")}</div>
+                  </div>
+                  <span class="pill" style="background:${colors[i % colors.length]}">${esc(e.position || "Unassigned")}</span>
+                </div>
+              `).join("") || `<div class="empty">No employees yet.</div>`}
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel"><h3>Attendance Trend</h3><div class="chart-box"><canvas id="attendanceChart"></canvas></div></div>
+          <div class="panel"><h3>Status Breakdown</h3><div class="chart-box"><canvas id="statusChart"></canvas></div></div>
+        </div>
+      `;
+
+      createChart("hiringChart","bar",s.hiring?.labels || [],s.hiring?.data || [],["#7C3AED"]);
+      createChart("deptChart","doughnut",s.department_mix?.labels || [],s.department_mix?.data || [],colors);
+      createChart("attendanceChart","line",s.attendance?.labels || [],s.attendance?.data || [],["#4F46E5"]);
+      createChart("statusChart","doughnut",s.status?.labels || [],s.status?.data || [],["#10B981","#EF4444","#EC4899","#F59E0B"]);
+    }
+
+    function createChart(id,type,labels,data,bg){
+      if(charts[id]) charts[id].destroy();
+      const ctx = document.getElementById(id);
+      charts[id] = new Chart(ctx,{
+        type,
+        data:{
+          labels,
+          datasets:[{
+            label:"Count",
+            data,
+            backgroundColor:type === "line" ? "rgba(79,70,229,.12)" : bg,
+            borderColor:type === "line" ? "#4F46E5" : bg,
+            borderWidth:2,
+            fill:type === "line",
+            tension:.38,
+            borderRadius:8
+          }]
+        },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          plugins:{legend:{display:type.includes("doughnut"),position:"bottom"}},
+          scales:type.includes("doughnut") ? {} : {y:{beginAtZero:true,ticks:{precision:0}},x:{grid:{display:false}}}
+        }
+      });
+    }
+
+    function filterRows(resource){
+      const cfg = configs[resource];
+      const query = (state.filters[resource]?.q || "").toLowerCase();
+      return state[resource].filter(row=>{
+        const matchesSearch = !query || JSON.stringify(row).toLowerCase().includes(query);
+        const matchesFilters = (cfg.filters || []).every(f=>{
+          const val = state.filters[resource]?.[f.key] ?? "";
+          if(!val) return true;
+          if(resource === "departments" && f.key === "has_positions"){
+            const has = state.positions.some(p=>Number(p.department_id)===Number(row.id));
+            return val === "with" ? has : !has;
+          }
+          return String(row[f.key] ?? "") === String(val);
+        });
+        return matchesSearch && matchesFilters;
+      });
+    }
+
+    function renderSection(resource){
+      const cfg = configs[resource];
+      const rows = filterRows(resource);
+
+      document.getElementById("content").innerHTML = `
+        <div class="section-card">
+          <div class="toolbar">
+            <div class="tools-left">
+              <div class="search-wrap">
+                <i data-lucide="search"></i>
+                <input class="input" placeholder="Search ${resource}..." value="${esc(state.filters[resource]?.q || "")}" oninput="setFilter('${resource}','q',this.value)">
+              </div>
+              ${(cfg.filters || []).map(f=>{
+                const options = typeof f.options === "function" ? f.options() : f.options;
+                return `
+                  <select class="select" style="width:auto;min-width:190px" onchange="setFilter('${resource}','${f.key}',this.value)">
+                    ${options.map(o=>`<option value="${esc(o[0])}" ${(state.filters[resource]?.[f.key] ?? "") == o[0] ? "selected" : ""}>${esc(o[1])}</option>`).join("")}
+                  </select>
+                `;
+              }).join("")}
+            </div>
+            <button class="btn" onclick="openModal('${resource}')"><i data-lucide="plus"></i>${esc(cfg.addText)}</button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  ${cfg.columns.map(c=>`<th>${esc(c.label)}</th>`).join("")}
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows.map(row=>`
+                  <tr>
+                    ${cfg.columns.map(c=>`<td>${c.render(row)}</td>`).join("")}
+                    <td>
+                      <div class="row-actions">
+                        <button class="icon-btn" title="Edit" onclick="openModal('${resource}',${row.id})"><i data-lucide="pencil"></i></button>
+                        <button class="icon-btn danger" title="Delete" onclick="deleteRow('${resource}',${row.id})"><i data-lucide="trash-2"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                `).join("") || `<tr><td colspan="${cfg.columns.length + 1}"><div class="empty">No records found.</div></td></tr>`}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function setFilter(resource,key,value){
+      state.filters[resource] = {...(state.filters[resource] || {}), [key]:value};
+      renderSection(resource);
+      lucide.createIcons();
+    }
+
+    function fieldHtml(field,value,current){
+      const required = field.required ? "required" : "";
+      const readonly = field.readonly ? "readonly" : "";
+      const wide = field.wide ? "wide" : "";
+      if(field.type === "select"){
+        const opts = typeof field.options === "function" ? field.options() : field.options;
+        return `<div class="field ${wide}">
+          <label>${esc(field.label)}</label>
+          <select class="select" name="${esc(field.key)}" ${required}>
+            ${opts.map(o=>`<option value="${esc(o[0])}" ${String(value ?? "") === String(o[0]) ? "selected" : ""}>${esc(o[1])}</option>`).join("")}
+          </select>
+        </div>`;
+      }
+      if(field.type === "textarea"){
+        return `<div class="field ${wide}">
+          <label>${esc(field.label)}</label>
+          <textarea class="textarea" name="${esc(field.key)}" ${required}>${esc(value || "")}</textarea>
+        </div>`;
+      }
+      if(field.type === "file"){
+        const src = current?.profile_pic || avatarFor(current || "Employee");
+        return `<div class="field ${wide}">
+          <label>${esc(field.label)}</label>
+          <div style="display:flex;align-items:center;gap:14px">
+            <img id="profilePreview" class="preview" src="${esc(src)}">
+            <input class="input" name="${esc(field.key)}" type="file" accept="image/*">
+          </div>
+          <div style="color:#6B7280;font-size:12px">Images are resized in-browser to a maximum of 200×200px before saving.</div>
+        </div>`;
+      }
+      return `<div class="field ${wide}">
+        <label>${esc(field.label)}</label>
+        <input class="input" name="${esc(field.key)}" type="${esc(field.type)}" value="${esc(value ?? "")}" ${required} ${readonly}>
+      </div>`;
+    }
+
+    function openModal(resource,id=null){
+      const cfg = configs[resource];
+      const current = id ? state[resource].find(x=>Number(x.id)===Number(id)) : null;
+      const title = `${id ? "Edit" : cfg.addText} ${cfg.title}`;
+
+      document.getElementById("modalRoot").innerHTML = `
+        <div class="modal-backdrop">
+          <form class="modal" id="entityForm">
+            <div class="modal-head">
+              <h3>${esc(title)}</h3>
+              <button class="icon-btn" type="button" onclick="closeModal()"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+              <div class="form-grid">
+                ${cfg.fields.map(f=>fieldHtml(f,current?.[f.key],current)).join("")}
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button class="btn secondary" type="button" onclick="closeModal()">Cancel</button>
+              <button class="btn" type="submit"><i data-lucide="save"></i>Save</button>
+            </div>
+          </form>
+        </div>
+      `;
+
+      const form = document.getElementById("entityForm");
+
+      const fileInput = form.querySelector('input[type="file"]');
+      if(fileInput){
+        fileInput.addEventListener("change", async e=>{
+          if(e.target.files[0]){
+            const resized = await resizeImage(e.target.files[0]);
+            document.getElementById("profilePreview").src = resized;
+          }
+        });
+      }
+
+      if(resource === "payroll"){
+        const empSelect = form.elements.employee_id;
+        const basic = form.elements.basic_salary;
+        const allowances = form.elements.allowances;
+        const deductions = form.elements.deductions;
+        const net = form.elements.net_pay;
+
+        async function fillSalary(){
+          if(!empSelect.value) return;
+          const emp = await api(`/api/employees/${empSelect.value}`);
+          basic.value = Number(emp.salary || 0);
+          recalcPayroll(form);
+        }
+
+        empSelect.addEventListener("change", fillSalary);
+        [allowances,deductions,basic].forEach(el=>el && el.addEventListener("input",()=>recalcPayroll(form)));
+
+        if(!id && empSelect.value) fillSalary();
+      }
+
+      form.addEventListener("submit", async e=>{
+        e.preventDefault();
+        const payload = {};
+
+        for(const f of cfg.fields){
+          if(f.type === "file") continue;
+          const el = form.elements[f.key];
+          let val = el ? el.value : null;
+          if(val === "") val = null;
+          if(f.valueType === "number" && val !== null) val = Number(val);
+          if(f.type === "number" && val !== null) val = Number(val);
+          payload[f.key] = val;
+        }
+
+        if(resource === "employees"){
+          const picSrc = document.getElementById("profilePreview")?.src;
+          payload.profile_pic = picSrc || current?.profile_pic || `${DEFAULT_AVATAR}&seed=${encodeURIComponent(`${payload.first_name || ""} ${payload.last_name || ""}`)}`;
+        }
+
+        if(resource === "payroll"){
+          payload.net_pay = Number(payload.net_pay || 0);
+          if(!payload.net_pay){
+            payload.net_pay = Number(payload.basic_salary || 0) + Number(payload.allowances || 0) - Number(payload.deductions || 0);
+          }
+        }
+
+        await saveRow(resource,id,payload);
+      });
+
+      lucide.createIcons();
+    }
+
+    function recalcPayroll(form){
+      const basic = Number(form.elements.basic_salary?.value || 0);
+      const allowances = Number(form.elements.allowances?.value || 0);
+      const deductions = Number(form.elements.deductions?.value || 0);
+      if(form.elements.net_pay) form.elements.net_pay.value = Math.max(0,basic + allowances - deductions).toFixed(2);
+    }
+
+    function closeModal(){
+      document.getElementById("modalRoot").innerHTML = "";
+    }
+
+    async function resizeImage(file){
+      return new Promise((resolve,reject)=>{
+        const reader = new FileReader();
+        reader.onload = e=>{
+          const img = new Image();
+          img.onload = ()=>{
+            const max = 200;
+            let {width,height} = img;
+            if(width > height && width > max){
+              height = Math.round(height * max / width);
+              width = max;
+            }else if(height > max){
+              width = Math.round(width * max / height);
+              height = max;
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img,0,0,width,height);
+            resolve(canvas.toDataURL("image/jpeg",.86));
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function saveRow(resource,id,payload){
+      await api(`/api/${resource}${id ? "/" + id : ""}`,{
+        method:id ? "PUT" : "POST",
+        body:JSON.stringify(payload)
+      });
+      closeModal();
+      await loadAll();
+      render();
+      toast(`${configs[resource].title} saved`);
+    }
+
+    async function deleteRow(resource,id){
+      if(!confirm(`Delete this ${configs[resource].title.toLowerCase()}?`)) return;
+      await api(`/api/${resource}/${id}`,{method:"DELETE"});
+      await loadAll();
+      render();
+      toast(`${configs[resource].title} deleted`);
+    }
+
+    function openAssignModal(positionId){
+      const position = state.positions.find(p=>Number(p.id)===Number(positionId));
+      const currentEmployees = state.employees.filter(e=>Number(e.position_id)===Number(positionId));
+      document.getElementById("modalRoot").innerHTML = `
+        <div class="modal-backdrop">
+          <form class="modal" id="assignForm">
+            <div class="modal-head">
+              <h3>Assign Employee to ${esc(position?.title || "Position")}</h3>
+              <button class="icon-btn" type="button" onclick="closeModal()"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+              <div class="field">
+                <label>Employee</label>
+                <select class="select" name="employee_id" required>
+                  ${state.employees.map(e=>`<option value="${e.id}">${esc(employeeName(e))} ${e.position_id ? `(currently: ${esc(e.position_title || "Assigned")})` : ""}</option>`).join("")}
+                </select>
+              </div>
+              <div class="field">
+                <label>Currently Assigned</label>
+                <div>
+                  ${currentEmployees.map((e,i)=>`<span class="pill" style="margin:3px;background:${colors[i % colors.length]}">${esc(employeeName(e))}</span>`).join("") || `<span style="color:#6B7280">No employees assigned yet.</span>`}
+                </div>
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button class="btn secondary" type="button" onclick="closeModal()">Cancel</button>
+              <button class="btn" type="submit"><i data-lucide="user-plus"></i>Assign Employee</button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.getElementById("assignForm").addEventListener("submit", async e=>{
+        e.preventDefault();
+        const employeeId = e.target.employee_id.value;
+        await api(`/api/employees/${employeeId}`,{
+          method:"PUT",
+          body:JSON.stringify({position_id:Number(positionId)})
+        });
+        closeModal();
+        await loadAll();
+        render();
+        toast("Employee assigned to position");
+      });
+      lucide.createIcons();
+    }
+
+    function showApp(){
+      document.getElementById("loginView").classList.add("hidden");
+      document.getElementById("appView").classList.remove("hidden");
+    }
+
+    function showLogin(){
+      document.getElementById("appView").classList.add("hidden");
+      document.getElementById("loginView").classList.remove("hidden");
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async e=>{
+      e.preventDefault();
+      try{
+        await login(e.target.email.value,e.target.password.value);
+        showApp();
+        await loadAll();
+        if(!location.hash) location.hash = "#dashboard";
+        render();
+        toast("Welcome to JavaGoat HR");
+      }catch(err){
+        toast(err.message);
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click",()=>{
+      localStorage.removeItem(API_TOKEN_KEY);
+      showLogin();
+      toast("Logged out");
+    });
+
+    window.addEventListener("hashchange",render);
+
+    (async function init(){
+      lucide.createIcons();
+      if(localStorage.getItem(API_TOKEN_KEY)){
+        showApp();
+        try{
+          await loadAll();
+          if(!location.hash) location.hash = "#dashboard";
+          render();
+        }catch(err){
+          toast(err.message);
+        }
+      }else{
+        showLogin();
+      }
+      lucide.createIcons();
+    })();
+  </script>
+</body>
+</html>
